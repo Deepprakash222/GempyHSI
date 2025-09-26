@@ -45,13 +45,12 @@ parser.add_argument('--cluster', metavar='cluster', type=int, default=6, help='t
 parser.add_argument('--dimred', metavar='dimred', type=str , default="pca", help='type of dimensionality reduction')
 parser.add_argument('--plot_dimred', metavar='plot_dimred', type=str , default="tsne", help='type of dimensionality reduction for plotting after data is alread reduced in a smaller dimension')
 parser.add_argument('--prior_number_samples', metavar='prior_number_samples', type=int , default=1000, help='number of samples for prior')
-parser.add_argument('--posterior_number_samples', metavar='posterior_number_samples', type=int , default=251, help='number of samples for posterior')
+parser.add_argument('--posterior_number_samples', metavar='posterior_number_samples', type=int , default=250, help='number of samples for posterior')
 parser.add_argument('--posterior_warmup_steps', metavar='posterior_warmup_steps', type=int , default=250, help='number of  warmup steps for posterior')
 parser.add_argument('--directory_path', metavar='directory_path', type=str , default="./Results", help='name of the directory in which result should be stored')
 parser.add_argument('--dataset', metavar='dataset', type=str , default="Salinas", help='name of the dataset (Salinas, KSL, KSL_layer3 or other)')
 parser.add_argument('--posterior_num_chain', metavar='posterior_num_chain', type=int , default=5, help='number of chain')
 parser.add_argument('--posterior_condition',metavar='posterior_condition', type=int , default=1, help='1-Deterministic for mean and covariance for hsi data, 2-Deterministic for covariance but a prior on mean ,3-Prior on mean and covariance')
-#parser.add_argument('--num_layers',metavar='num_layers', type=int , default=3, help='number of points used to model layer information')
 parser.add_argument('--slope_gempy', metavar='slope_gempy', type=float , default=45.0, help='slope for gempy #45, 50, 200')
 parser.add_argument('--scale', metavar='scale', type=float , default=10.0, help='scaling factor to generate probability for each voxel')
 parser.add_argument('--alpha', metavar='alpha', type=float , default=1, help='scaling parameter for the mean, 0.1')
@@ -179,7 +178,6 @@ def main():
     posterior_num_chain = args.posterior_num_chain
     directory_path = args.directory_path
     dataset = args.dataset
-    #num_layers = args.num_layers
     posterior_condition= args.posterior_condition
     slope_gempy = args.slope_gempy
     scale = args.scale
@@ -324,6 +322,10 @@ def main():
         normalised_hsi =torch.tensor(df_with_spectral_normalised.to_numpy(), device =device, dtype =dtype)
         #normalised_hsi =torch.tensor(df_with_spectral_normalised_.to_numpy(), device =device, dtype =dtype)
         print(normalised_hsi.shape)
+        
+    else: 
+        print("Provide dataset in the form in the format of [x,y,z,feature_1, feature_2, ... , feature_D] and information of label if availalbe")
+        
         
     ## It is difficult to work with data in such a high dimensions, because the covariance matrix 
     ## determinant quickly goes to zero even if eigen-values are in the range of 1e-3. Therefore it is advisable 

@@ -948,6 +948,8 @@ def main():
         filename_tsne_final_label = directory_path_Mean + "/tsne_gempy_final_label_mean_minus_sigma.png"
         TSNE_transformation(data=data, label=torch.round(torch.tensor(custom_grid_values_post)), filename=filename_tsne_final_label)
     
+    
+    
 if __name__ == "__main__":
     
     # Your main script code starts here
