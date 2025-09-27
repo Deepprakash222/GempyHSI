@@ -34,10 +34,10 @@ from sklearn.cluster import KMeans
 
 import io
 import contextlib
-from code_synthetic.model1 import MyModel
-from code_synthetic.map_func import compute_map
-from code_synthetic.initial_gempy_model import *
-from code_synthetic.final_gempy_model import *
+from Gempy_PSHD.code_synthetic.model1 import MyModel
+from Gempy_PSHD.code_synthetic.map_func import compute_map
+from Gempy_PSHD.code_synthetic.initial_gempy_model import *
+from Gempy_PSHD.code_synthetic.final_gempy_model import *
 
 parser = argparse.ArgumentParser(description='pass values using command line')
 parser.add_argument('--cluster', metavar='cluster', type=int, default=3, help='total number of cluster')

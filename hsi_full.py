@@ -33,15 +33,15 @@ from sklearn.cluster import KMeans
 
 import io
 import contextlib
-from HSI_full.model1 import MyModel
-from HSI_full.map_func import compute_map
-from HSI_full.initial_gempy_model import *
-from HSI_full.final_gempy_model import *
+from Gempy_IBI_GMM.HSI_full.model1 import MyModel
+from Gempy_IBI_GMM.HSI_full.map_func import compute_map
+from Gempy_IBI_GMM.HSI_full.initial_gempy_model import *
+from Gempy_IBI_GMM.HSI_full.final_gempy_model import *
 
 parser = argparse.ArgumentParser(description='pass values using command line')
 parser.add_argument('--startval', metavar='startcol', type=int, default=18,  help='start x column value')
 parser.add_argument('--endval', metavar='endcol', type=int, default=22, help='end x column value')
-parser.add_argument('--cluster', metavar='cluster', type=int, default=3, help='total number of cluster')
+parser.add_argument('--cluster', metavar='cluster', type=int, default=6, help='total number of cluster')
 parser.add_argument('--dimred', metavar='dimred', type=str , default="pca", help='type of dimensionality reduction')
 parser.add_argument('--plot_dimred', metavar='plot_dimred', type=str , default="tsne", help='type of dimensionality reduction for plotting after data is alread reduced in a smaller dimension')
 parser.add_argument('--prior_number_samples', metavar='prior_number_samples', type=int , default=1000, help='number of samples for prior')
@@ -50,11 +50,8 @@ parser.add_argument('--posterior_warmup_steps', metavar='posterior_warmup_steps'
 parser.add_argument('--directory_path', metavar='directory_path', type=str , default="./Results", help='name of the directory in which result should be stored')
 parser.add_argument('--dataset', metavar='dataset', type=str , default="Salinas", help='name of the dataset (Salinas, KSL, KSL_layer3 or other)')
 parser.add_argument('--posterior_num_chain', metavar='posterior_num_chain', type=int , default=5, help='number of chain')
-parser.add_argument('--posterior_condition',metavar='posterior_condition', type=int , default=1, help='1-Deterministic for mean and covariance for hsi data, 2-Deterministic for covariance but a prior on mean ,3-Prior on mean and covariance')
-parser.add_argument('--slope_gempy', metavar='slope_gempy', type=float , default=200.0, help='slope for gempy #45, 50, 200')
+parser.add_argument('--slope_gempy', metavar='slope_gempy', type=float , default=45.0, help='slope for gempy #45, 50, 200')
 parser.add_argument('--scale', metavar='scale', type=float , default=10.0, help='scaling factor to generate probability for each voxel')
-parser.add_argument('--alpha', metavar='alpha', type=float , default=1, help='scaling parameter for the mean, 0.1')
-parser.add_argument('--beta', metavar='beta', type=float , default=0.5, help='scaling parameter for the covariance, 20')
 
 dtype = torch.float64
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -174,12 +171,11 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     posterior_warmup_steps = args.posterior_warmup_steps
     posterior_num_chain = args.posterior_num_chain
     directory_path = args.directory_path
+     
     
-    posterior_condition= args.posterior_condition
     slope_gempy = args.slope_gempy
     scale = args.scale
-    alpha = args.alpha
-    beta  = args.beta
+    
     
     ## seed numpy and pytorch
     seed = 42
@@ -192,13 +188,9 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     pyro.set_rng_seed(42)
     
     
-    if posterior_condition==1:
-        directory_path = directory_path + "/" + dataset.name + "_full" + "/posterior_condition_" + str(posterior_condition) + "_slope_gempy_" + str(slope_gempy) + "_scale_" + str(scale) +"_chain_" + str(posterior_num_chain) + "_warmup_step_" + str(posterior_warmup_steps) + "_posterior_sample_" + str(posterior_number_samples)
-    elif posterior_condition==2:
-        directory_path = directory_path + "/" + dataset.name + "_full" + "/posterior_condition_" + str(posterior_condition) + "_alpha_" + str(alpha) + "_slope_gempy_" + str(slope_gempy) + "_scale_" + str(scale) + "_chain_" + str(posterior_num_chain)+ "_warmup_step_" + str(posterior_warmup_steps) + "_posterior_sample_" + str(posterior_number_samples)
-    elif (posterior_condition==3) or (posterior_condition==4):
-        directory_path = directory_path + "/" + dataset.name + "_full" + "/posterior_condition_" + str(posterior_condition) + "_alpha_" + str(alpha) + "_beta_"+str(beta) + "_slope_gempy_" + str(slope_gempy) + "_scale_" + str(scale) +"_chain_" + str(posterior_num_chain)+ "_warmup_step_" + str(posterior_warmup_steps) + "_posterior_sample_" + str(posterior_number_samples)
-    # Check if the directory exists
+    
+    directory_path = directory_path + "/" + dataset.name + "_full"  + "_slope_gempy_" + str(slope_gempy) + "_scale_" + str(scale) +"_chain_" + str(posterior_num_chain) + "_warmup_step_" + str(posterior_warmup_steps) + "_posterior_sample_" + str(posterior_number_samples)
+    
     # Check if the directory exists
     if not os.path.exists(directory_path):
         # Create the directory if it does not exist
@@ -420,13 +412,13 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     
     filename_Bayesian_graph =directory_path +"/Bayesian_graph.png"
     #dot = pyro.render_model(model.model_test, model_args=(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,posterior_condition, scale, cluster, alpha, beta),render_distributions=True,filename=filename_Bayesian_graph)
-    dot = pyro.render_model(model.model_test, model_args=(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,posterior_condition, scale, cluster, alpha, beta, device,dtype),render_distributions=True)
+    dot = pyro.render_model(model.model_test, model_args=(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers, scale, cluster, device,dtype),render_distributions=True)
     
     ################################################################################
     # Prior
     ################################################################################
     pyro.set_rng_seed(42)
-    prior = Predictive(model.model_test, num_samples=prior_number_samples)(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,posterior_condition, scale, cluster, alpha, beta, device,dtype)
+    prior = Predictive(model.model_test, num_samples=prior_number_samples)(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers, scale, cluster, device,dtype)
     # Key to avoid
     avoid_key =[]
     for i in range(len(test_list)+1):
@@ -454,7 +446,7 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     pyro.primitives.enable_validation(is_validate=True)
     nuts_kernel = NUTS(model.model_test, step_size=0.0085, adapt_step_size=True, target_accept_prob=0.75, max_tree_depth=10, init_strategy=init_to_mean)
     mcmc = MCMC(nuts_kernel, num_samples=posterior_number_samples,mp_context="spawn", warmup_steps=posterior_warmup_steps,num_chains=posterior_num_chain, disable_validation=False)
-    mcmc.run(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,posterior_condition,scale, cluster, alpha, beta, device,dtype)
+    mcmc.run(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,scale, cluster, device,dtype)
     
     
     posterior_samples = mcmc.get_samples(group_by_chain=False)
@@ -473,7 +465,7 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
         
         # Trace the model with the current sample values and the data as an argument
         # You need to use `sample_dict` to assign values to the model's random variables
-        trace = poutine.trace(lambda: model.model_test(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,posterior_condition,scale, cluster, alpha, beta,device,dtype)).get_trace()
+        trace = poutine.trace(lambda: model.model_test(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,scale, cluster,device,dtype)).get_trace()
         
         # Apply the sampled parameter values to the model trace
         for name, value in sample_dict.items():
@@ -481,7 +473,7 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
         
         # we need to re run our model to update the value of node which are dependent on posterior sample
         replayed_model = poutine.replay(model.model_test, trace=trace)
-        trace = poutine.trace(replayed_model).get_trace(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,posterior_condition,scale, cluster, alpha, beta,device,dtype)
+        trace = poutine.trace(replayed_model).get_trace(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,scale, cluster,device,dtype)
         # Calculate the log joint (which includes log likelihood and log prior)
         log_joint = trace.log_prob_sum()
         
@@ -496,11 +488,11 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     
     print(summary_output)
     
-    with open(f'{directory_path}/mcmc_summary_p{posterior_condition}.txt', 'w') as f:
+    with open(f'{directory_path}/mcmc_summary_p.txt', 'w') as f:
         f.write(summary_output)
     
     
-    posterior_predictive = Predictive(model.model_test, posterior_samples)(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,posterior_condition,scale, cluster, alpha, beta, device, dtype)
+    posterior_predictive = Predictive(model.model_test, posterior_samples)(normalised_hsi,test_list,geo_model_test,mean_init,cov_init,factor,num_layers,scale, cluster, device, dtype)
     plt.figure(figsize=(8,10))
     data = az.from_pyro(posterior=mcmc, prior=prior, posterior_predictive=posterior_predictive)
     az.plot_trace(data)
@@ -529,15 +521,11 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     ###########################################################################################
     MAP_sample_index_trace = torch.argmax(torch.tensor(log_posterior_vals))
     print("MAP_sample_index_trace\n", MAP_sample_index_trace)
-    # MAP_sample_index, max_posterior_value, log_posterior_vals2 = compute_map(posterior_samples,geo_model_test,normalised_hsi,test_list,y_obs_label, mean_init,cov_init, factor, directory_path,num_layers,posterior_condition,scale, cluster, alpha, beta , dtype,device)
-    # print("MAP_sample_index\n", MAP_sample_index)
+    
     MAP_sample_index = MAP_sample_index_trace
-    # MAP_sample_index, max_posterior_value, log_posterior_vals2 = compute_map(posterior_samples,geo_model_test,normalised_hsi,test_list,y_obs_label, mean_init,cov_init, factor, directory_path,num_layers,posterior_condition,scale, cluster, alpha, beta , dtype,device)
-    # print("MAP_sample_index\n", MAP_sample_index)
+   
     MAP_sample_index = MAP_sample_index_trace
-    # print(torch.tensor(log_posterior_vals, dtype=dtype))
-    # print(torch.tensor(log_posterior_vals2,dtype=dtype))
-    # print(torch.tensor(log_posterior_vals,dtype=dtype) - torch.tensor(log_posterior_vals2, dtype=dtype))
+    
     directory_path_MAP = directory_path +"/MAP"
     if not os.path.exists(directory_path_MAP):
         # Create the directory if it does not exist
@@ -551,20 +539,10 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     ################################################################################
 
     RV_mu_post_MAP = {}
-    if posterior_condition ==1: 
-        for i in range(num_layers):
+    
+    for i in range(num_layers):
             RV_mu_post_MAP["mu_"+str(i+1)+"_post"] = posterior_samples["mu_"+str(i+1)][MAP_sample_index]
-    elif posterior_condition==2:
-            for i in range(num_layers):
-                RV_mu_post_MAP["mu_"+str(i+1)+"_post"] = posterior_samples["mu_"+str(i+1)][MAP_sample_index]
-    elif posterior_condition ==3:
-            for i in range(num_layers):
-                RV_mu_post_MAP["mu_"+str(i+1)+"_post"] = posterior_samples["mu_"+str(i+1)][MAP_sample_index]
-    elif posterior_condition ==4:
-            for i in range(num_layers):
-                RV_mu_post_MAP["mu_"+str(i+1)+"_post"] = posterior_samples["mu_"+str(i+1)][MAP_sample_index]
-    else:
-            raise Exception("Only 3 different posterior condition is implemented yet")
+    
     # # Update the model with the new top layer's location
     interpolation_input = geo_model_test.interpolation_input
     
@@ -618,187 +596,41 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     mean = []
     cov = []
     #########################################################################################
-    # Posertior 1
+    # Posertior
     #########################################################################################
-    if posterior_condition==1:
-        
-        for k in range(z_nk.shape[1]):
-                mean_k = torch.sum( z_nk[:,k][:,None] * normalised_hsi, axis=0)/ N_k[k]
-                
-                cov_k = torch.zeros((mean_k.shape[0],mean_k.shape[0]), device =device, dtype =dtype)
-                for j in range(z_nk.shape[0]):
-                    cov_k +=  z_nk[j,k]* torch.matmul((normalised_hsi[j,:] - mean_k).reshape((-1,1)) ,(normalised_hsi[j,:] - mean_k).reshape((1,-1)))
-                mean.append(mean_k)
-                cov_k=cov_k/N_k[k] #+ 1e-3 * torch.diag(torch.ones(cov_k.shape[0],device =device, dtype =dtype))
-                cov.append(cov_k)
-        mean_tensor = torch.stack(mean, dim=0)
-        cov_tensor = torch.stack(cov,dim=0)
-        
-        gmm_data ={}
-        gmm_data["weights"]=pi_k.detach().numpy().tolist()
-        gmm_data["means"] = mean_tensor.detach().numpy().tolist()
-        gmm_data["cov"] = cov_tensor.detach().numpy().tolist()
-        # We can also calculate the accuracy using the mean and covariance to see if our GMM model has imroved or not
-        gamma_post = torch.zeros(z_nk.shape)
-
-        log_likelihood=torch.tensor(0.0, device =device, dtype =dtype)
-
-        for j in range(normalised_hsi.shape[0]):
-                
-            likelihood = 0.0  
-
-            for c in range(cluster):
-                likelihood += pi_k[c] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[c], covariance_matrix=cov_tensor[c]).log_prob(normalised_hsi[j]))            
-            for k in range(gamma_post.shape[1]):
-                gamma_post[j][k] = (pi_k[k] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[k],covariance_matrix= cov_tensor[k]).log_prob(normalised_hsi[j]))) / likelihood
-                
-            log_likelihood += torch.log(likelihood)
-    #########################################################################################
-    # Posertior 2
-    #########################################################################################
-    elif posterior_condition==2: 
-        
-        RV_mean_data_post_MAP ={} 
-        for j in range(cluster):  
-                RV_mean_data_post_MAP[f"mean_data{j+1}"+"_post"] = posterior_samples["mean_data"+str(j+1)][MAP_sample_index]
-
-        for idx, (key, value) in enumerate(RV_mean_data_post_MAP.items()):
-            D = value.shape[0]
-            mean_k = value
-            cov_k = torch.zeros((D,D),device =device, dtype =dtype)
-            for j in range(z_nk.shape[0]):
-                    cov_k +=  z_nk[j,idx]* torch.matmul((normalised_hsi[j,:] - mean_k).reshape((-1,1)) ,(normalised_hsi[j,:] - mean_k).reshape((1,-1)))
-            cov_k=cov_k/N_k[idx] #+ 1e-3 * torch.diag(torch.ones(cov_k.shape[0],device =device, dtype =dtype))
-            mean.append(mean_k)
-            cov.append(cov_k)
-        mean_tensor =torch.stack(mean,dim=0)
-        cov_tensor = torch.stack(cov,dim=0)
-        
-        gmm_data ={}
-        gmm_data["weights"]=pi_k.detach().numpy().tolist()
-        gmm_data["means"] = mean_tensor.detach().numpy().tolist()
-        gmm_data["cov"] = cov_tensor.detach().numpy().tolist()
-        
-        # We can also calculate the accuracy using the mean and covariance to see if our GMM model has imroved or not
-        gamma_post = torch.zeros(z_nk.shape) 
-        
-        log_likelihood=torch.tensor(0.0, device =device, dtype =dtype)
-        for j in range(normalised_hsi.shape[0]):
-                
-            likelihood = 0.0  
-
-            for c in range(cluster):
-                likelihood += pi_k[c] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[c], covariance_matrix=cov_tensor[c]).log_prob(normalised_hsi[j]))            
-            for k in range(gamma_post.shape[1]):
-                gamma_post[j][k] = (pi_k[k] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[k],covariance_matrix= cov_tensor[k]).log_prob(normalised_hsi[j]))) / likelihood
-                
-            log_likelihood += torch.log(likelihood)
-    #########################################################################################
-    # Posertior 3
-    #########################################################################################
-    elif posterior_condition ==3:
-        
-        RV_mean_data_post_MAP ={}
-        RV_post_cov_eigen_MAP ={}
-
-        loc_mean = torch.tensor(mean_init,device =device, dtype =dtype)
-        D = loc_mean.shape[1]
-        eigen_vector_list , eigen_values_list =[],[]
-        for i in range(cov_init.shape[0]):
-            eigen_values, eigen_vectors = np.linalg.eig(cov_init[i])
-            eigen_values_list.append(eigen_values)
-            eigen_vector_list.append(eigen_vectors)
-        
-        for j in range(cluster):  
-                RV_mean_data_post_MAP[f"mean_data{j+1}"+"_post"] = posterior_samples["mean_data_"+str(j+1)][MAP_sample_index]
-                RV_post_cov_eigen_MAP[f"cov_eigen_values_{j+1}"+"_post"] = posterior_samples["cov_eigen_values_"+str(j+1)][MAP_sample_index]
-        for idx, (key, value) in enumerate(RV_mean_data_post_MAP.items()):
-            mean_k = value
-            eigen_vectors_data = torch.tensor(eigen_vector_list[idx], device =device, dtype =dtype)
-            cov_data = eigen_vectors_data @ (torch.diag(RV_post_cov_eigen_MAP[f"cov_eigen_values_{idx+1}"+"_post"])**2 +1e-8 * torch.eye(eigen_values_list[0].shape[0], device =device, dtype =dtype)) @ eigen_vectors_data.T
-            mean.append(mean_k)
-            cov.append(cov_data)
-            
-        mean_tensor =torch.stack(mean,dim=0)
-        cov_tensor = torch.stack(cov,dim=0)
-        
-        gmm_data ={}
-        gmm_data["weights"]=pi_k.detach().numpy().tolist()
-        gmm_data["means"] = mean_tensor.detach().numpy().tolist()
-        gmm_data["cov"] = cov_tensor.detach().numpy().tolist()
-        
-        # We can also calculate the accuracy using the mean and covariance to see if our GMM model has imroved or not
-        gamma_post = torch.zeros(z_nk.shape) 
-        
-        log_likelihood=torch.tensor(0.0, device =device, dtype =dtype)
-        for j in range(normalised_hsi.shape[0]):
-                
-            likelihood = 0.0  
-
-            for c in range(cluster):
-                likelihood += pi_k[c] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[c], covariance_matrix=cov_tensor[c]).log_prob(normalised_hsi[j]))            
-            for k in range(gamma_post.shape[1]):
-                gamma_post[j][k] = (pi_k[k] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[k],covariance_matrix= cov_tensor[k]).log_prob(normalised_hsi[j]))) / likelihood
-                
-            log_likelihood += torch.log(likelihood)
-    #########################################################################################
-    # Posertior 4
-    #########################################################################################
-    elif posterior_condition ==4:
-        
-        RV_mean_data_post_MAP ={}
-        RV_post_cov_upper_MAP ={}
-
-        loc_mean = torch.tensor(mean_init,device =device, dtype =dtype)
     
-        n = loc_mean.shape[1]
-        # Number of elements in the upper triangular part (including diagonal)
-        num_upper_tri_elements = n * (n + 1) // 2
-        
-        for j in range(cluster):  
-                RV_mean_data_post_MAP[f"mean_data{j+1}"+"_post"] = posterior_samples["mean_data_"+str(j+1)][MAP_sample_index]
-                RV_post_cov_upper_MAP[f"upper_tri_cov_{j+1}"+"_post"] = posterior_samples["upper_tri_cov_"+str(j+1)][MAP_sample_index]
-        for idx, (key, value) in enumerate(RV_mean_data_post_MAP.items()):
-            mean_k = value
-            A = torch.zeros((n,n), device =device, dtype =dtype)
-            # Get the upper triangular indices
-            upper_tri_indices = torch.triu_indices(n, n)
-            # Assign the sampled elements to the upper triangular positions
-            A = A.index_put((upper_tri_indices[0], upper_tri_indices[1]),RV_post_cov_upper_MAP[f"upper_tri_cov_{idx+1}"+"_post"])
-            # Symmetrize the matrix A
-            A = A + A.T - torch.diag(A.diagonal())
-            cov_data = torch.matrix_exp(A)
+    for k in range(z_nk.shape[1]):
+            mean_k = torch.sum( z_nk[:,k][:,None] * normalised_hsi, axis=0)/ N_k[k]
             
+            cov_k = torch.zeros((mean_k.shape[0],mean_k.shape[0]), device =device, dtype =dtype)
+            for j in range(z_nk.shape[0]):
+                cov_k +=  z_nk[j,k]* torch.matmul((normalised_hsi[j,:] - mean_k).reshape((-1,1)) ,(normalised_hsi[j,:] - mean_k).reshape((1,-1)))
             mean.append(mean_k)
-            cov.append(cov_data)
-            
-        mean_tensor =torch.stack(mean,dim=0)
-        cov_tensor = torch.stack(cov,dim=0)
-        
-        gmm_data ={}
-        gmm_data["weights"]=pi_k.detach().numpy().tolist()
-        gmm_data["means"] = mean_tensor.detach().numpy().tolist()
-        gmm_data["cov"] = cov_tensor.detach().numpy().tolist()
-        
-        # We can also calculate the accuracy using the mean and covariance to see if our GMM model has imroved or not
-        gamma_post = torch.zeros(z_nk.shape) 
-        
-        log_likelihood=torch.tensor(0.0, device =device, dtype =dtype)
-        for j in range(normalised_hsi.shape[0]):
-                
-            likelihood = 0.0  
+            cov_k=cov_k/N_k[k] #+ 1e-3 * torch.diag(torch.ones(cov_k.shape[0],device =device, dtype =dtype))
+            cov.append(cov_k)
+    mean_tensor = torch.stack(mean, dim=0)
+    cov_tensor = torch.stack(cov,dim=0)
+    
+    gmm_data ={}
+    gmm_data["weights"]=pi_k.detach().numpy().tolist()
+    gmm_data["means"] = mean_tensor.detach().numpy().tolist()
+    gmm_data["cov"] = cov_tensor.detach().numpy().tolist()
+    # We can also calculate the accuracy using the mean and covariance to see if our GMM model has imroved or not
+    gamma_post = torch.zeros(z_nk.shape)
 
-            for c in range(cluster):
-                likelihood += pi_k[c] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[c], covariance_matrix=cov_tensor[c]).log_prob(normalised_hsi[j]))            
-            for k in range(gamma_post.shape[1]):
-                gamma_post[j][k] = (pi_k[k] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[k],covariance_matrix= cov_tensor[k]).log_prob(normalised_hsi[j]))) / likelihood
-                
-            log_likelihood += torch.log(likelihood)
-    #########################################################################################
-    # Other posterior
-    #########################################################################################
-    else:
-            raise Exception("Only 3 different posterior condition is implemented yet")
+    log_likelihood=torch.tensor(0.0, device =device, dtype =dtype)
+
+    for j in range(normalised_hsi.shape[0]):
+            
+        likelihood = 0.0  
+
+        for c in range(cluster):
+            likelihood += pi_k[c] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[c], covariance_matrix=cov_tensor[c]).log_prob(normalised_hsi[j]))            
+        for k in range(gamma_post.shape[1]):
+            gamma_post[j][k] = (pi_k[k] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[k],covariance_matrix= cov_tensor[k]).log_prob(normalised_hsi[j]))) / likelihood
+            
+        log_likelihood += torch.log(likelihood)
+    
     #########################################################################################
     # Calculate entropy
     #########################################################################################
@@ -895,24 +727,11 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     BackendTensor.change_backend_gempy(engine_backend=gp.data.AvailableBackends.PYTORCH)
     
     RV_mu_post_Mean = {}
-    if posterior_condition ==1: 
-        for i in range(num_layers):
-            RV_mu_post_Mean["mu_"+str(i+1)+"_post"] = posterior_samples["mu_"+str(i+1)].mean()
-            RV_mu_post_Mean["mu_"+str(i+1)+"_std_post"] = posterior_samples["mu_"+str(i+1)].std()
-    elif posterior_condition==2:
-            for i in range(num_layers):
-                RV_mu_post_Mean["mu_"+str(i+1)+"_post"] = posterior_samples["mu_"+str(i+1)].mean()
-                RV_mu_post_Mean["mu_"+str(i+1)+"_std_post"] = posterior_samples["mu_"+str(i+1)].std()
-    elif posterior_condition ==3:
-            for i in range(num_layers):
-                RV_mu_post_Mean["mu_"+str(i+1)+"_post"] = posterior_samples["mu_"+str(i+1)].mean()
-                RV_mu_post_Mean["mu_"+str(i+1)+"_std_post"] = posterior_samples["mu_"+str(i+1)].std()
-    elif posterior_condition ==4:
-            for i in range(num_layers):
-                RV_mu_post_Mean["mu_"+str(i+1)+"_post"] = posterior_samples["mu_"+str(i+1)].mean()
-                RV_mu_post_Mean["mu_"+str(i+1)+"_std_post"] = posterior_samples["mu_"+str(i+1)].std()
-    else:
-            raise Exception("Only 3 different posterior condition is implemented yet")
+    
+    for i in range(num_layers):
+        RV_mu_post_Mean["mu_"+str(i+1)+"_post"] = posterior_samples["mu_"+str(i+1)].mean()
+        RV_mu_post_Mean["mu_"+str(i+1)+"_std_post"] = posterior_samples["mu_"+str(i+1)].std()
+    
     # # Update the model with the new top layer's location
     interpolation_input = geo_model_test.interpolation_input
     
@@ -969,187 +788,42 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     cov = []
     
     #########################################################################################
-    # Posertior 1
+    # Posertior
     #########################################################################################
-    if posterior_condition ==1:
-        for k in range(z_nk.shape[1]):
-                mean_k = torch.sum( z_nk[:,k][:,None] * normalised_hsi, axis=0)/ N_k[k]
-                
-                cov_k = torch.zeros((mean_k.shape[0],mean_k.shape[0]), device =device, dtype =dtype)
-                for j in range(z_nk.shape[0]):
-                    cov_k +=  z_nk[j,k]* torch.matmul((normalised_hsi[j,:] - mean_k).reshape((-1,1)) ,(normalised_hsi[j,:] - mean_k).reshape((1,-1)))
-                mean.append(mean_k)
-                cov_k=cov_k/N_k[k] #+ 1e-3 * torch.diag(torch.ones(cov_k.shape[0],device =device, dtype =dtype))
-                cov.append(cov_k)
-        mean_tensor = torch.stack(mean, dim=0)
-        cov_tensor = torch.stack(cov,dim=0)
-        
-        gmm_data ={}
-        gmm_data["weights"]=pi_k.detach().numpy().tolist()
-        gmm_data["means"] = mean_tensor.detach().numpy().tolist()
-        gmm_data["cov"] = cov_tensor.detach().numpy().tolist()
-        # We can also calculate the accuracy using the mean and covariance to see if our GMM model has imroved or not
-        gamma_post = torch.zeros(z_nk.shape)
-
-        log_likelihood=torch.tensor(0.0, device =device, dtype =dtype)
-
-        for j in range(normalised_hsi.shape[0]):
-                
-            likelihood = 0.0  
-
-            for c in range(cluster):
-                likelihood += pi_k[c] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[c], covariance_matrix=cov_tensor[c]).log_prob(normalised_hsi[j]))            
-            for k in range(gamma_post.shape[1]):
-                gamma_post[j][k] = (pi_k[k] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[k],covariance_matrix= cov_tensor[k]).log_prob(normalised_hsi[j]))) / likelihood
-                
-            log_likelihood += torch.log(likelihood)
+    
+    for k in range(z_nk.shape[1]):
+            mean_k = torch.sum( z_nk[:,k][:,None] * normalised_hsi, axis=0)/ N_k[k]
             
-    #########################################################################################
-    # Posertior 2
-    #########################################################################################
-    elif posterior_condition==2: 
-        
-        RV_mean_data_post_Mean ={} 
-        for j in range(cluster):  
-                RV_mean_data_post_Mean[f"mean_data{j+1}"+"_post"] = posterior_samples["mean_data"+str(j+1)].mean(dim=0)
-        
-        for idx, (key, value) in enumerate(RV_mean_data_post_Mean.items()):
-            D = value.shape[0]
-            mean_k = value
-            cov_k = torch.zeros((D,D),device =device, dtype =dtype)
+            cov_k = torch.zeros((mean_k.shape[0],mean_k.shape[0]), device =device, dtype =dtype)
             for j in range(z_nk.shape[0]):
-                    cov_k +=  z_nk[j,idx]* torch.matmul((normalised_hsi[j,:] - mean_k).reshape((-1,1)) ,(normalised_hsi[j,:] - mean_k).reshape((1,-1)))
-            cov_k=cov_k/N_k[idx] #+ 1e-3 * torch.diag(torch.ones(cov_k.shape[0],device =device, dtype =dtype))
+                cov_k +=  z_nk[j,k]* torch.matmul((normalised_hsi[j,:] - mean_k).reshape((-1,1)) ,(normalised_hsi[j,:] - mean_k).reshape((1,-1)))
             mean.append(mean_k)
+            cov_k=cov_k/N_k[k] #+ 1e-3 * torch.diag(torch.ones(cov_k.shape[0],device =device, dtype =dtype))
             cov.append(cov_k)
-        mean_tensor =torch.stack(mean,dim=0)
-        cov_tensor = torch.stack(cov,dim=0)
-        
-        gmm_data ={}
-        gmm_data["weights"]=pi_k.detach().numpy().tolist()
-        gmm_data["means"] = mean_tensor.detach().numpy().tolist()
-        gmm_data["cov"] = cov_tensor.detach().numpy().tolist()
-        
-        # We can also calculate the accuracy using the mean and covariance to see if our GMM model has imroved or not
-        gamma_post = torch.zeros(z_nk.shape) 
-        
-        log_likelihood=torch.tensor(0.0, device =device, dtype =dtype)
-        for j in range(normalised_hsi.shape[0]):
-                
-            likelihood = 0.0  
+    mean_tensor = torch.stack(mean, dim=0)
+    cov_tensor = torch.stack(cov,dim=0)
+    
+    gmm_data ={}
+    gmm_data["weights"]=pi_k.detach().numpy().tolist()
+    gmm_data["means"] = mean_tensor.detach().numpy().tolist()
+    gmm_data["cov"] = cov_tensor.detach().numpy().tolist()
+    # We can also calculate the accuracy using the mean and covariance to see if our GMM model has imroved or not
+    gamma_post = torch.zeros(z_nk.shape)
 
-            for c in range(cluster):
-                likelihood += pi_k[c] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[c], covariance_matrix=cov_tensor[c]).log_prob(normalised_hsi[j]))            
-            for k in range(gamma_post.shape[1]):
-                gamma_post[j][k] = (pi_k[k] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[k],covariance_matrix= cov_tensor[k]).log_prob(normalised_hsi[j]))) / likelihood
-                
-            log_likelihood += torch.log(likelihood)
-    #########################################################################################
-    # Posertior 3
-    #########################################################################################
-    elif posterior_condition ==3:
-        
-        RV_mean_data_post_Mean ={}
-        RV_post_cov_eigen_Mean ={}
+    log_likelihood=torch.tensor(0.0, device =device, dtype =dtype)
 
-        loc_mean = torch.tensor(mean_init,device =device, dtype =dtype)
-        D = loc_mean.shape[1]
-        eigen_vector_list , eigen_values_list =[],[]
-        for i in range(cov_init.shape[0]):
-            eigen_values, eigen_vectors = np.linalg.eig(cov_init[i])
-            eigen_values_list.append(eigen_values)
-            eigen_vector_list.append(eigen_vectors)
-        
-        for j in range(cluster):  
-                RV_mean_data_post_Mean[f"mean_data{j+1}"+"_post"] = posterior_samples["mean_data_"+str(j+1)].mean(dim=0)
-                RV_post_cov_eigen_Mean[f"cov_eigen_values_{j+1}"+"_post"] = posterior_samples["cov_eigen_values_"+str(j+1)].mean(dim=0)
-        for idx, (key, value) in enumerate(RV_mean_data_post_Mean.items()):
-            mean_k = value
-            eigen_vectors_data = torch.tensor(eigen_vector_list[idx], device =device, dtype =dtype)
-            cov_data = eigen_vectors_data @ (torch.diag(RV_post_cov_eigen_Mean[f"cov_eigen_values_{idx+1}"+"_post"])**2 + 1e-8 * torch.eye(eigen_values_list[0].shape[0], device =device, dtype =dtype)) @ eigen_vectors_data.T
-            mean.append(mean_k)
-            cov.append(cov_data)
+    for j in range(normalised_hsi.shape[0]):
             
-        mean_tensor =torch.stack(mean,dim=0)
-        cov_tensor = torch.stack(cov,dim=0)
-        
-        gmm_data ={}
-        gmm_data["weights"]=pi_k.detach().numpy().tolist()
-        gmm_data["means"] = mean_tensor.detach().numpy().tolist()
-        gmm_data["cov"] = cov_tensor.detach().numpy().tolist()
-        
-        # We can also calculate the accuracy using the mean and covariance to see if our GMM model has imroved or not
-        gamma_post = torch.zeros(z_nk.shape) 
-        
-        log_likelihood=torch.tensor(0.0, device =device, dtype =dtype)
-        for j in range(normalised_hsi.shape[0]):
-                
-            likelihood = 0.0  
+        likelihood = 0.0  
 
-            for c in range(cluster):
-                likelihood += pi_k[c] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[c], covariance_matrix=cov_tensor[c]).log_prob(normalised_hsi[j]))            
-            for k in range(gamma_post.shape[1]):
-                gamma_post[j][k] = (pi_k[k] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[k],covariance_matrix= cov_tensor[k]).log_prob(normalised_hsi[j]))) / likelihood
-                
-            log_likelihood += torch.log(likelihood)
-    #########################################################################################
-    # Posertior 4
-    #########################################################################################
-    elif posterior_condition ==4:
-        
-        RV_mean_data_post_Mean ={}
-        RV_post_cov_upper_Mean ={}
-
-        loc_mean = torch.tensor(mean_init,device =device, dtype =dtype)
-        
-        n = loc_mean.shape[1]
-        # Number of elements in the upper triangular part (including diagonal)
-        num_upper_tri_elements = n * (n + 1) // 2
-        
-        for j in range(cluster):  
-                RV_mean_data_post_Mean[f"mean_data{j+1}"+"_post"] = posterior_samples["mean_data_"+str(j+1)].mean(dim=0)
-                RV_post_cov_upper_Mean[f"upper_tri_cov_{j+1}"+"_post"] = posterior_samples["upper_tri_cov_"+str(j+1)].mean(dim=0)
-        for idx, (key, value) in enumerate(RV_mean_data_post_Mean.items()):
-            mean_k = value
-            A = torch.zeros((n,n), device =device, dtype =dtype)
-            # Get the upper triangular indices
-            upper_tri_indices = torch.triu_indices(n, n)
-            # Assign the sampled elements to the upper triangular positions
-            A = A.index_put((upper_tri_indices[0], upper_tri_indices[1]),RV_post_cov_upper_Mean[f"upper_tri_cov_{idx+1}"+"_post"])
-            # Symmetrize the matrix A
-            A = A + A.T - torch.diag(A.diagonal())
-            cov_data = torch.matrix_exp(A)
+        for c in range(cluster):
+            likelihood += pi_k[c] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[c], covariance_matrix=cov_tensor[c]).log_prob(normalised_hsi[j]))            
+        for k in range(gamma_post.shape[1]):
+            gamma_post[j][k] = (pi_k[k] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[k],covariance_matrix= cov_tensor[k]).log_prob(normalised_hsi[j]))) / likelihood
             
-            mean.append(mean_k)
-            cov.append(cov_data)
-            
-        mean_tensor =torch.stack(mean,dim=0)
-        cov_tensor = torch.stack(cov,dim=0)
+        log_likelihood += torch.log(likelihood)
         
-        gmm_data ={}
-        gmm_data["weights"]=pi_k.detach().numpy().tolist()
-        gmm_data["means"] = mean_tensor.detach().numpy().tolist()
-        gmm_data["cov"] = cov_tensor.detach().numpy().tolist()
-        
-        # We can also calculate the accuracy using the mean and covariance to see if our GMM model has imroved or not
-        gamma_post = torch.zeros(z_nk.shape) 
-        
-        log_likelihood=torch.tensor(0.0, device =device, dtype =dtype)
-        for j in range(normalised_hsi.shape[0]):
-                
-            likelihood = 0.0  
-
-            for c in range(cluster):
-                likelihood += pi_k[c] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[c], covariance_matrix=cov_tensor[c]).log_prob(normalised_hsi[j]))            
-            for k in range(gamma_post.shape[1]):
-                gamma_post[j][k] = (pi_k[k] * torch.exp(dist.MultivariateNormal(loc=mean_tensor[k],covariance_matrix= cov_tensor[k]).log_prob(normalised_hsi[j]))) / likelihood
-                
-            log_likelihood += torch.log(likelihood)
-    #########################################################################################
-    # Other posterior
-    #########################################################################################
-    else:
-            raise Exception("Only 3 different posterior condition is implemented yet")
+    
     #########################################################################################
     # Calculate entropy
     #########################################################################################

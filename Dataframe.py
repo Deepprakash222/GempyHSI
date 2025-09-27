@@ -55,9 +55,9 @@ def my_function(user_data: UserDataset):
     
     if user_data.name=="SalinasA":
         
-        SalinasA= np.array(scipy.io.loadmat('./HSI_Salinas/SalinasA.mat')['salinasA'])
-        SalinasA_corrected= np.array(scipy.io.loadmat('./HSI_Salinas/SalinasA_corrected.mat')['salinasA_corrected'])
-        SalinasA_gt= np.array(scipy.io.loadmat('./HSI_Salinas/SalinasA_gt.mat')['salinasA_gt'])
+        SalinasA= np.array(scipy.io.loadmat('./Dataset/HSI_Salinas/SalinasA.mat')['salinasA'])
+        SalinasA_corrected= np.array(scipy.io.loadmat('./Dataset/HSI_Salinas/SalinasA_corrected.mat')['salinasA_corrected'])
+        SalinasA_gt= np.array(scipy.io.loadmat('./Dataset/HSI_Salinas/SalinasA_gt.mat')['salinasA_gt'])
         
         # Arrange the label in groundtruth
         i=0
@@ -114,7 +114,7 @@ def my_function(user_data: UserDataset):
     elif user_data.name=="KSL" or user_data.name=="KSL_layer3" :
         # Load KSL_file file
         import joblib
-        filename_a = './Fw__Hyperspectral_datasets_from_the_KSL_cores/CuSp131.pkl'
+        filename_a = './Dataset/Fw__Hyperspectral_datasets_from_the_KSL_cores/CuSp131.pkl'
         with open(filename_a, 'rb') as myfile:
             a =joblib.load(myfile)
         column_name =[]
@@ -203,37 +203,7 @@ def my_function(user_data: UserDataset):
         xyz_coord = torch.tensor([[x_loc, y_loc, z] for z in z_loc], dtype=torch.float64)
         user_data.data =xyz_coord
         
-    elif user_data.name=="Syn_label_shift_20_error":
-        # Define boundaries and labels
-        br1 = -845 + 50
-        br2 = -825 + 50
-        z = np.linspace(-900, -700, 250)
-        label = np.ones_like(z)
-        label[z < br1] = 3
-        label[(z >= br1) & (z < br2)] = 2
 
-        # Randomly change 20% of each label to other labels
-        np.random.seed(42)  # For reproducibility
-        unique_labels = np.unique(label)  # Get all unique labels
-        new_label = label.copy()
-
-        for lbl in unique_labels:
-            # Get indices of the current label
-            label_indices = np.where(label == lbl)[0]
-            # Number of labels to change
-            n_to_change = int(0.2 * len(label_indices))
-            # Randomly select indices to change
-            change_indices = np.random.choice(label_indices, n_to_change, replace=False)
-            # Assign new labels randomly (different from the current label)
-            for idx in change_indices:
-                new_label[idx] = np.random.choice(unique_labels[unique_labels != lbl])
-        # Convert to tensor
-        user_data.labels = torch.tensor(new_label, dtype=torch.float64)
-        x_loc = 300
-        y_loc = 0
-        z_loc = z
-        xyz_coord = torch.tensor([[x_loc, y_loc, z] for z in z_loc], dtype=torch.float64)
-        user_data.data =xyz_coord
         
   elif user_data.data is None and user_data.labels is None:
     raise DataNotFoundError(f"Dataset '{user_data.name}' not found and no data provided.")
@@ -286,7 +256,7 @@ def run_files(user_data):
 # Example Usage:
 def setting_dataset():
     # Use a pre-defined dataset
-    user_data_1 = UserDataset(name="KSL_layer3")  # No need to provide data explicitly
+    user_data_1 = UserDataset(name="SalinasA")  # No need to provide data explicitly
     my_function(user_data_1)
     # #print(user_data_1.labels)
     # user_data_2 = UserDataset(name="KSL_layer3")  # No need to provide data explicitly
@@ -322,6 +292,7 @@ def model_creation(dataset):
         
 def main():
   dataset= setting_dataset()
+  
   geo_model_init = "Abc"
   geo_model_final= "cds"
   if dataset.data.shape[1]>3 :
