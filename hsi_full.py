@@ -389,10 +389,10 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     geo_model_test.interpolation_options.sigmoid_slope = slope_gempy
     test_list=[]
     if dataset.name=="SalinasA":
-        test_list.append({"update":"interface_data","id":torch.tensor([1]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[1,2],dtype=dtype, device=device), "std":torch.tensor(2.0,dtype=dtype, device=device)}})
-        test_list.append({"update":"interface_data","id":torch.tensor([4]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[4,2],dtype=dtype, device=device), "std":torch.tensor(2.0,dtype=dtype, device=device)}})
-        test_list.append({"update":"interface_data","id":torch.tensor([7]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[7,2],dtype=dtype, device=device), "std":torch.tensor(2.0,dtype=dtype, device=device)}})
-        test_list.append({"update":"interface_data","id":torch.tensor([12]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[12,2],dtype=dtype, device=device), "std":torch.tensor(2.0,dtype=dtype, device=device)}})
+        test_list.append({"update":"interface_data","id":torch.tensor([1]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[1,2],dtype=dtype, device=device), "std":torch.tensor(0.3,dtype=dtype, device=device)}})
+        test_list.append({"update":"interface_data","id":torch.tensor([4]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[4,2],dtype=dtype, device=device), "std":torch.tensor(0.3,dtype=dtype, device=device)}})
+        test_list.append({"update":"interface_data","id":torch.tensor([7]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[7,2],dtype=dtype, device=device), "std":torch.tensor(0.3,dtype=dtype, device=device)}})
+        test_list.append({"update":"interface_data","id":torch.tensor([12]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[12,2],dtype=dtype, device=device), "std":torch.tensor(0.3,dtype=dtype, device=device)}})
     elif dataset.name =="KSL":
         test_list.append({"update":"interface_data","id":torch.tensor([1]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[1,2],dtype=dtype, device=device), "std":torch.tensor(0.02,dtype=dtype, device=device)}})
         test_list.append({"update":"interface_data","id":torch.tensor([4]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[4,2],dtype=dtype, device=device), "std":torch.tensor(0.02,dtype=dtype, device=device)}})
@@ -508,6 +508,7 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
         az.plot_density(
         data=[data.posterior, data.prior],
         shade=.9,
+        bw=0.1,
         var_names=['mu_' +str(i+1)],
         data_labels=["Posterior Predictive", "Prior Predictive"],
         colors=[default_red, default_blue],
