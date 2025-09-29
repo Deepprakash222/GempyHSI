@@ -256,35 +256,15 @@ def run_files(user_data):
 # Example Usage:
 def setting_dataset():
     # Use a pre-defined dataset
-    user_data_1 = UserDataset(name="SalinasA")  # No need to provide data explicitly
-    my_function(user_data_1)
-    # #print(user_data_1.labels)
-    # user_data_2 = UserDataset(name="KSL_layer3")  # No need to provide data explicitly
-    # my_function(user_data_2)
+    #user_data = UserDataset(name="KSL_layer3")  # No need to provide data explicitly
+    #user_data = UserDataset(name="SalinasA")  # No need to provide data explicitly
+    user_data = UserDataset(name="Syn_label")  # No need to provide data explicitly
     
-    # # Provide data directly
-    # df = pd.DataFrame({'col1': [7, 8, 9], 'col2': [10, 11, 12]})
-    # user_data_3 = UserDataset(name="MyDataFrame", data=df)
-    # my_function(user_data_3) 
-
-    # Provide data and labels
-    # np_array = np.array([[7, 8], [9, 10], [11, 12]])
-    # labels_np = np.array([0, 1, 0])
-    # user_data_4 = UserDataset(name="MyNumPyArray", data=np_array, labels=labels_np)
-    # my_function(user_data_4)
-
-    # labels_np = np.array([0, 1, 0])
-    # user_data_5 = UserDataset(name="MyNum_Labels", labels=labels_np)
-    # my_function(user_data_5)
+    my_function(user_data)
+ 
+    run_files(user_data)
     
-    run_files(user_data_1)
-    # Attempt to use a non-existent dataset without providing data
-    # user_data_6 = UserDataset(name="non_existent_dataset") 
-    # try:
-    #     my_function(user_data_6)
-    # except DataNotFoundError as e:
-    #     print(f"Error: {e}") 
-    return user_data_1
+    return user_data
 def model_creation(dataset):
     geo_model = None
     return geo_model
@@ -295,9 +275,10 @@ def main():
   
   geo_model_init = "Abc"
   geo_model_final= "cds"
+  
   if dataset.data.shape[1]>3 :
-    #run_hsi_label(dataset, geo_model_init, geo_model_final=geo_model_final)
-    run_hsi_full(dataset, geo_model_init, geo_model_final)
+    run_hsi_label(dataset, geo_model_init, geo_model_final=geo_model_final)
+    #run_hsi_full(dataset, geo_model_init, geo_model_final)
   elif dataset.data.shape[1]==3 and dataset.labels is not None:
     run_synthetic(dataset, geo_model_init, geo_model_final)
     

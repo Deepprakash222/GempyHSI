@@ -41,7 +41,7 @@ from Gempy_IBI_GMM.HSI_full.final_gempy_model import *
 parser = argparse.ArgumentParser(description='pass values using command line')
 parser.add_argument('--startval', metavar='startcol', type=int, default=18,  help='start x column value')
 parser.add_argument('--endval', metavar='endcol', type=int, default=22, help='end x column value')
-parser.add_argument('--cluster', metavar='cluster', type=int, default=6, help='total number of cluster')
+parser.add_argument('--cluster', metavar='cluster', type=int, default=3, help='total number of cluster')
 parser.add_argument('--dimred', metavar='dimred', type=str , default="pca", help='type of dimensionality reduction')
 parser.add_argument('--plot_dimred', metavar='plot_dimred', type=str , default="tsne", help='type of dimensionality reduction for plotting after data is alread reduced in a smaller dimension')
 parser.add_argument('--prior_number_samples', metavar='prior_number_samples', type=int , default=1000, help='number of samples for prior')
@@ -50,7 +50,7 @@ parser.add_argument('--posterior_warmup_steps', metavar='posterior_warmup_steps'
 parser.add_argument('--directory_path', metavar='directory_path', type=str , default="./Results", help='name of the directory in which result should be stored')
 parser.add_argument('--dataset', metavar='dataset', type=str , default="Salinas", help='name of the dataset (Salinas, KSL, KSL_layer3 or other)')
 parser.add_argument('--posterior_num_chain', metavar='posterior_num_chain', type=int , default=5, help='number of chain')
-parser.add_argument('--slope_gempy', metavar='slope_gempy', type=float , default=45.0, help='slope for gempy #45, 50, 200')
+parser.add_argument('--slope_gempy', metavar='slope_gempy', type=float , default=200.0, help='slope for gempy #45, 200')
 parser.add_argument('--scale', metavar='scale', type=float , default=10.0, help='scaling factor to generate probability for each voxel')
 
 dtype = torch.float64
@@ -508,7 +508,7 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
         az.plot_density(
         data=[data.posterior, data.prior],
         shade=.9,
-        bw=0.1,
+        # bw=0.1,
         var_names=['mu_' +str(i+1)],
         data_labels=["Posterior Predictive", "Prior Predictive"],
         colors=[default_red, default_blue],

@@ -386,6 +386,7 @@ def run_synthetic(dataset, geo_model_init, geo_model_final):
         az.plot_density(
         data=[data.posterior, data.prior],
         shade=.9,
+        bw= 0.003,
         var_names=['mu_' +str(i+1)],
         data_labels=["Posterior Predictive", "Prior Predictive"],
         colors=[default_red, default_blue],
