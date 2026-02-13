@@ -245,6 +245,8 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
         geo_model_test = create_initial_gempy_model_KSL_3_layer(refinement=3,filename=prior_filename, save=False)
     else:
         geo_model_test = geo_model_init
+        
+    exit()
     ################################################################################
     # Custom grid
     ################################################################################
@@ -503,12 +505,14 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     ###############################################TODO################################
     # Plot and save the file for each parameter
     ###################################################################################
+    
     for i in range(len(test_list)):
+        
         plt.figure(figsize=(8,10))
         az.plot_density(
         data=[data.posterior, data.prior],
         shade=.9,
-        # bw=0.1,
+        bw=0.1, #Comment this line if you are using KSL dataset otherwise for SalinasA, we are using this bandwidth
         var_names=['mu_' +str(i+1)],
         data_labels=["Posterior Predictive", "Prior Predictive"],
         colors=[default_red, default_blue],

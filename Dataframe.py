@@ -256,9 +256,10 @@ def run_files(user_data):
 # Example Usage:
 def setting_dataset():
     # Use a pre-defined dataset
-    #user_data = UserDataset(name="KSL_layer3")  # No need to provide data explicitly
+    user_data = UserDataset(name="KSL_layer3")  # No need to provide data explicitly
     #user_data = UserDataset(name="SalinasA")  # No need to provide data explicitly
-    user_data = UserDataset(name="Syn_label")  # No need to provide data explicitly
+    #user_data = UserDataset(name="Syn_label")  # No need to provide data explicitly
+    #user_data = UserDataset(name="Syn_label_shift")  # No need to provide data explicitly
     
     my_function(user_data)
  
@@ -277,8 +278,8 @@ def main():
   geo_model_final= "cds"
   
   if dataset.data.shape[1]>3 :
-    run_hsi_label(dataset, geo_model_init, geo_model_final=geo_model_final)
-    #run_hsi_full(dataset, geo_model_init, geo_model_final)
+    #run_hsi_label(dataset, geo_model_init, geo_model_final=geo_model_final)
+    run_hsi_full(dataset, geo_model_init, geo_model_final)
   elif dataset.data.shape[1]==3 and dataset.labels is not None:
     run_synthetic(dataset, geo_model_init, geo_model_final)
     

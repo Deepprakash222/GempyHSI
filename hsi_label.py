@@ -52,7 +52,7 @@ parser.add_argument('--directory_path', metavar='directory_path', type=str , def
 
 parser.add_argument('--posterior_num_chain', metavar='posterior_num_chain', type=int , default=5, help='number of chain')
 
-parser.add_argument('--slope_gempy', metavar='slope_gempy', type=float , default=45.0, help='slope for gempy, salinas defaul= 45')
+parser.add_argument('--slope_gempy', metavar='slope_gempy', type=float , default=45.0, help='slope for gempy, salinas default= 45')
 
 parser.add_argument('--scale', metavar='scale', type=float , default=10.0, help='scaling factor to generate probability for each voxel')
 parser.add_argument('--likelihood_std', metavar='ikelihood_std', type=float , default=0.4, help='scaling parameter for the mean, 0.1')

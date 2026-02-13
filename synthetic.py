@@ -185,6 +185,7 @@ def run_synthetic(dataset, geo_model_init, geo_model_final):
     torch.backends.cudnn.benchmark = False
     # Setting the seed for Pyro sampling
     pyro.set_rng_seed(42)
+    
     directory_path = directory_path + "/" + dataset.name  + "_slope_gempy_" + str(slope_gempy)  + "_likelihood_std_" + str(likelihood_std)
     
     # Check if the directory exists
