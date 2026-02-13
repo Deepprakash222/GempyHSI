@@ -241,13 +241,6 @@ def run_hsi_label(dataset, geo_model_init, geo_model_final):
         geo_model_test = create_initial_gempy_model_Salinas_6_layer(refinement=3,filename=prior_filename, save=False)
         
     ################################################################################
-    elif dataset.name=="KSL":
-        # Create initial model with higher refinement for better resolution and save it
-        geo_model_test = create_initial_gempy_model_KSL_4_layer(refinement=7,filename=prior_filename, save=True)
-        # We can initialize again but with lower refinement because gempy solution are inddependent
-        geo_model_test = create_initial_gempy_model_KSL_4_layer(refinement=3,filename=prior_filename, save=False)
-        
-    
     elif dataset.name =="KSL_layer3":
         # Create initial model with higher refinement for better resolution and save it
         geo_model_test = create_initial_gempy_model_KSL_3_layer(refinement=7,filename=prior_filename, save=True)
@@ -407,10 +400,7 @@ def run_hsi_label(dataset, geo_model_init, geo_model_final):
         test_list.append({"update":"interface_data","id":torch.tensor([4]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[4,2],dtype=dtype, device=device), "std":torch.tensor(2.0,dtype=dtype, device=device)}})
         test_list.append({"update":"interface_data","id":torch.tensor([7]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[7,2],dtype=dtype, device=device), "std":torch.tensor(2.0,dtype=dtype, device=device)}})
         test_list.append({"update":"interface_data","id":torch.tensor([12]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[12,2],dtype=dtype, device=device), "std":torch.tensor(2.0,dtype=dtype, device=device)}})
-    elif dataset.name =="KSL":
-        test_list.append({"update":"interface_data","id":torch.tensor([1]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[1,2],dtype=dtype, device=device), "std":torch.tensor(0.02,dtype=dtype, device=device)}})
-        test_list.append({"update":"interface_data","id":torch.tensor([4]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[4,2],dtype=dtype, device=device), "std":torch.tensor(0.02,dtype=dtype, device=device)}})
-        test_list.append({"update":"interface_data","id":torch.tensor([7]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[7,2],dtype=dtype, device=device), "std":torch.tensor(0.02,dtype=dtype, device=device)}})
+        
     elif dataset.name=="KSL_layer3":
         test_list.append({"update":"interface_data","id":torch.tensor([1]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[1,2],dtype=dtype, device=device), "std":torch.tensor(0.02,dtype=dtype, device=device)}})
         test_list.append({"update":"interface_data","id":torch.tensor([4]), "direction":"Z", "prior_distribution":"normal","normal":{"mean":torch.tensor(sp_coords_copy_test[4,2],dtype=dtype, device=device), "std":torch.tensor(0.02,dtype=dtype, device=device)}})
@@ -587,8 +577,6 @@ def run_hsi_label(dataset, geo_model_init, geo_model_final):
     filename_posterior_model = directory_path_MAP + "/Posterior_model.png"
     if dataset.name == "SalinasA":
         geo_model_test_post = create_final_gempy_model_Salinas_6_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
-    elif dataset.name =="KSL" :
-        geo_model_test_post = create_final_gempy_model_KSL_4_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
     elif dataset.name =="KSL_layer3":
         geo_model_test_post = create_final_gempy_model_KSL_3_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
     else:
@@ -667,8 +655,6 @@ def run_hsi_label(dataset, geo_model_init, geo_model_final):
     filename_posterior_model = directory_path_Mean + "/Posterior_model.png"
     if dataset.name =="SalinasA":
         geo_model_test_post = create_final_gempy_model_Salinas_6_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
-    elif dataset.name =="KSL" :
-        geo_model_test_post = create_final_gempy_model_KSL_4_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
     elif dataset.name =="KSL_layer3":
         geo_model_test_post = create_final_gempy_model_KSL_3_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
     else:
@@ -736,8 +722,6 @@ def run_hsi_label(dataset, geo_model_init, geo_model_final):
     filename_posterior_model = directory_path_Mean + "/Posterior_model_mean_plus_sigma.png"
     if dataset.name =="SalinasA":
         geo_model_test_post = create_final_gempy_model_Salinas_6_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
-    elif dataset.name =="KSL" :
-        geo_model_test_post = create_final_gempy_model_KSL_4_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
     elif dataset.name =="KSL_layer3":
         geo_model_test_post = create_final_gempy_model_KSL_3_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
     else:
@@ -803,8 +787,6 @@ def run_hsi_label(dataset, geo_model_init, geo_model_final):
     filename_posterior_model = directory_path_Mean + "/Posterior_model_mean_minus_sigma.png"
     if dataset.name =="SalinasA":
         geo_model_test_post = create_final_gempy_model_Salinas_6_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
-    elif dataset.name =="KSL" :
-        geo_model_test_post = create_final_gempy_model_KSL_4_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
     elif dataset.name =="KSL_layer3":
         geo_model_test_post = create_final_gempy_model_KSL_3_layer(refinement=7,filename=filename_posterior_model,sp_cord=sp_cord, save=False)
     else:

@@ -153,10 +153,7 @@ def calculate_entropy(mixing_coefficient):
     # Return the average entropy
     return entropy_per_point
 
-def objective(trial):
-    # suggest hyperparameter
-    alpha = trial.suggest_uniform("alpha", 1e-4, 100)
-    beta  = trial.suggest_uniform("beta", 1e-4, 100)
+
 
 def run_synthetic(dataset, geo_model_init, geo_model_final):
     """

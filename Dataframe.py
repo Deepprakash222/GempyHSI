@@ -111,7 +111,7 @@ def my_function(user_data: UserDataset):
         user_data.data = normalised_hsi
         
     
-    elif user_data.name=="KSL" or user_data.name=="KSL_layer3" :
+    elif user_data.name=="KSL_layer3" :
         # Load KSL_file file
         import joblib
         filename_a = './Dataset/Fw__Hyperspectral_datasets_from_the_KSL_cores/CuSp131.pkl'
@@ -278,7 +278,7 @@ def main():
   geo_model_final= "cds"
   
   if dataset.data.shape[1]>3 :
-    #run_hsi_label(dataset, geo_model_init, geo_model_final=geo_model_final)
+    # run_hsi_label(dataset, geo_model_init, geo_model_final=geo_model_final)
     run_hsi_full(dataset, geo_model_init, geo_model_final)
   elif dataset.data.shape[1]==3 and dataset.labels is not None:
     run_synthetic(dataset, geo_model_init, geo_model_final)
