@@ -278,8 +278,8 @@ def main():
   geo_model_final= "cds"
   
   if dataset.data.shape[1]>3 :
-    # run_hsi_label(dataset, geo_model_init, geo_model_final=geo_model_final)
-    run_hsi_full(dataset, geo_model_init, geo_model_final)
+    run_hsi_label(dataset, geo_model_init, geo_model_final=geo_model_final)
+    #run_hsi_full(dataset, geo_model_init, geo_model_final)
   elif dataset.data.shape[1]==3 and dataset.labels is not None:
     run_synthetic(dataset, geo_model_init, geo_model_final)
     

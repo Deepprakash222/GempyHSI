@@ -45,8 +45,8 @@ parser.add_argument('--cluster', metavar='cluster', type=int, default=3, help='t
 parser.add_argument('--dimred', metavar='dimred', type=str , default="pca", help='type of dimensionality reduction')
 parser.add_argument('--plot_dimred', metavar='plot_dimred', type=str , default="tsne", help='type of dimensionality reduction for plotting after data is alread reduced in a smaller dimension')
 parser.add_argument('--prior_number_samples', metavar='prior_number_samples', type=int , default=1000, help='number of samples for prior')
-parser.add_argument('--posterior_number_samples', metavar='posterior_number_samples', type=int , default=250, help='number of samples for posterior')
-parser.add_argument('--posterior_warmup_steps', metavar='posterior_warmup_steps', type=int , default=250, help='number of  warmup steps for posterior')
+parser.add_argument('--posterior_number_samples', metavar='posterior_number_samples', type=int , default=500, help='number of samples for posterior')
+parser.add_argument('--posterior_warmup_steps', metavar='posterior_warmup_steps', type=int , default=500, help='number of  warmup steps for posterior')
 parser.add_argument('--directory_path', metavar='directory_path', type=str , default="./Results", help='name of the directory in which result should be stored')
 parser.add_argument('--dataset', metavar='dataset', type=str , default="Salinas", help='name of the dataset (Salinas, KSL, KSL_layer3 or other)')
 parser.add_argument('--posterior_num_chain', metavar='posterior_num_chain', type=int , default=5, help='number of chain')
@@ -203,17 +203,24 @@ def run_hsi_full(dataset, geo_model_init, geo_model_final):
     # 
     ###########################################################################
     normalised_data = dataset.data
-    normalised_hsi = normalised_data[:, 3:]
+    normalised_hsi = normalised_data[:, 3:] # Get the hyperspectral data part of the data and ignore the coordinate information for now
     
     ## It is difficult to work with data in such a high dimensions, because the covariance matrix 
     ## determinant quickly goes to zero even if eigen-values are in the range of 1e-3. Therefore it is advisable 
     ## to fist apply dimensionality reduction to a lower dimensions
     if dimred=="pca":
         from sklearn.decomposition import PCA
-        pca = PCA(n_components=0.99)
+        # we can also set the number of components to a fixed number like 10 or 20 
+        # but I am using this to keep the variance explained by the data to be 99% after dimensionality reduction
+        pca = PCA(n_components=0.99) 
+        #fit and transform the data using PCA
         transformed_hsi = pca.fit_transform(normalised_hsi)
+        
         normalised_hsi = torch.tensor(transformed_hsi, device =device, dtype =dtype)
-        normalised_hsi[5,:] = 10 * normalised_hsi[5,:]
+        print("normalised_hsi.shape after pca\n", normalised_hsi.shape)
+        # We can see the effect of outliers on our model, by shifting one data point to an outliers
+        #normalised_hsi[5,:] = 10 * normalised_hsi[5,:] 
+        
     if dimred =="tsne":
         #######################TODO#####################
         ################################################
