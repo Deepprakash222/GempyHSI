@@ -45,7 +45,7 @@ parser.add_argument('--prior_number_samples', metavar='prior_number_samples', ty
 parser.add_argument('--posterior_number_samples', metavar='posterior_number_samples', type=int , default=250, help='number of samples for posterior')
 parser.add_argument('--posterior_warmup_steps', metavar='posterior_warmup_steps', type=int , default=250, help='number of  warmup steps for posterior')
 parser.add_argument('--directory_path', metavar='directory_path', type=str , default="./Results", help='name of the directory in which result should be stored')
-parser.add_argument('--dataset', metavar='dataset', type=str , default="Syn_label_shift_20_error", help='name of the dataset (Syn_label, Syn_label_shift, Syn_label_shift_20_error or other)')
+parser.add_argument('--dataset', metavar='dataset', type=str , default="Syn_label_shift", help='name of the dataset (Syn_label, Syn_label_shift or other)')
 parser.add_argument('--posterior_num_chain', metavar='posterior_num_chain', type=int , default=5, help='number of chain')
 
 parser.add_argument('--slope_gempy', metavar='slope_gempy', type=float , default=200.0, help='slope for gempy')
