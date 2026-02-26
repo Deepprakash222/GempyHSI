@@ -290,3 +290,43 @@ else:
 ## 💡 Example:
 If your dataset is SalinasA, the interface point with id = 1 and Z coordinate (sp_coords_copy_test[1, 2]) will be treated as a random variable for Bayesian inversion.
 This allows the inversion workflow to explore uncertainty in the model by sampling these points automatically.
+
+## Datasets
+
+The `Datasets/` directory contains all hyperspectral datasets used in this project.
+
+Datasets/
+│── Fw__Hyperspectral_datasets_from_the_KSL_cores/
+│── HSI_Salinas/
+
+---
+
+### 1️⃣ Fw__Hyperspectral_datasets_from_the_KSL_cores
+
+This folder contains hyperspectral datasets acquired from the Spremberg Site in Germany
+.
+
+These datasets are used for:
+
+- Labeled hyperspectral experiments (`run_hsi_label`)
+- Full hyperspectral Bayesian inversion (`run_hsi_full`)
+
+#### Notes:
+- For **KSL** and **Synthetic** experiments, we use: `gempy_slop = 200`
+  
+### 2️⃣ HSI_Salinas
+
+This folder contains the Salinas hyperspectral dataset 
+(typically SalinasA subset is used in experiments).
+
+It is widely used in hyperspectral image classification research.
+
+Used for:
+- `run_hsi_label`
+- `run_hsi_full`
+#### Notes:
+- For **SalinasA** dataset, we use: `gempy_slop = 45`
+
+## Results Directory
+
+All outputs are stored
