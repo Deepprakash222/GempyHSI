@@ -7,7 +7,7 @@ NUTS-MCMC).
 
 ## Workflow Overview
 
-![GempyHSI Workflow](./GempyHSI.png)
+![GempyHSI Workflow](./workflow.png)
 
 ## 🧠 Methodology
 
