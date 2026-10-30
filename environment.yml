@@ -1,62 +1,74 @@
-name: gempy3
+name: gempy_env
 channels:
   - conda-forge
 dependencies:
-  - atk-1.0=2.38.0=hcb7b3dd_1
-  - bzip2=1.0.8=h93a5062_5
-  - ca-certificates=2024.2.2=hf0a4a13_0
-  - cairo=1.18.0=hd1e100b_0
-  - expat=2.5.0=hb7217d7_1
-  - font-ttf-dejavu-sans-mono=2.37=hab24e00_0
-  - font-ttf-inconsolata=3.000=h77eed37_0
-  - font-ttf-source-code-pro=2.038=h77eed37_0
-  - font-ttf-ubuntu=0.83=h77eed37_1
-  - fontconfig=2.14.2=h82840c6_0
-  - fonts-conda-ecosystem=1=0
-  - fonts-conda-forge=1=0
-  - freetype=2.12.1=hadb7bae_2
-  - fribidi=1.0.10=h27ca646_0
-  - gdk-pixbuf=2.42.10=h15fa40c_4
-  - gettext=0.21.1=h0186832_0
-  - giflib=5.2.1=h1a8c8d9_3
-  - graphite2=1.3.13=h9f76cd9_1001
-  - graphviz=9.0.0=h3face73_1
-  - gtk2=2.24.33=h7895bb2_3
-  - gts=0.7.6=he42f4ea_4
-  - harfbuzz=8.3.0=h8f0ba13_0
-  - icu=73.2=hc8870d7_0
-  - lerc=4.0.0=h9a09cb3_0
-  - libcxx=16.0.6=h4653b0c_0
-  - libdeflate=1.19=hb547adb_0
-  - libexpat=2.5.0=hb7217d7_1
-  - libffi=3.4.2=h3422bc3_5
-  - libgd=2.3.3=hfdf3952_9
-  - libglib=2.78.4=h1635a5e_0
-  - libiconv=1.17=h0d3ecfb_2
-  - libjpeg-turbo=3.0.0=hb547adb_1
-  - libpng=1.6.42=h091b4b1_0
-  - librsvg=2.56.3=h55a2576_1
-  - libsqlite=3.45.1=h091b4b1_0
-  - libtiff=4.6.0=ha8a6c65_2
-  - libwebp=1.3.2=hf30222e_1
-  - libwebp-base=1.3.2=hb547adb_0
-  - libxml2=2.12.5=h0d0cfa8_0
-  - libzlib=1.2.13=h53f4e23_5
-  - ncurses=6.4=h463b476_2
-  - openssl=3.2.1=h0d3ecfb_0
-  - pango=1.50.14=hcf40dda_2
-  - pcre2=10.42=h26f9a81_0
-  - pip=24.0=pyhd8ed1ab_0
-  - pixman=0.43.2=hebf3989_0
-  - python=3.10.13=h2469fbe_1_cpython
-  - python-graphviz=0.20.1=pyh22cad53_0
-  - readline=8.2=h92ec313_1
-  - setuptools=69.1.0=pyhd8ed1ab_1
-  - tk=8.6.13=h5083fa2_1
-  - wheel=0.42.0=pyhd8ed1ab_0
-  - xz=5.2.6=h57fd34a_0
-  - zlib=1.2.13=h53f4e23_5
-  - zstd=1.5.5=h4f39d0f_0
+  - atk-1.0=2.38.0
+  - bzip2=1.0.8
+  - ca-certificates=2026.7.22
+  - cairo=1.18.0
+  - expat=2.5.0
+  - font-ttf-dejavu-sans-mono=2.37
+  - font-ttf-inconsolata=3.000
+  - font-ttf-source-code-pro=2.038
+  - font-ttf-ubuntu=0.83
+  - fontconfig=2.14.2
+  - fonts-conda-ecosystem=1
+  - fonts-conda-forge=1
+  - freetype=2.12.1
+  - fribidi=1.0.10
+  - gdk-pixbuf=2.42.10
+  - gettext=0.21.1
+  - giflib=5.2.1
+  - graphite2=1.3.13
+  - graphviz=9.0.0
+  - gtk2=2.24.33
+  - gts=0.7.6
+  - harfbuzz=8.3.0
+  - icu=73.2
+  - jupyter_client=8.10.0
+  - jupyter_core=5.9.1
+  - lerc=4.0.0
+  - libcxx=16.0.6
+  - libdeflate=1.19
+  - libexpat=2.5.0
+  - libffi=3.4.2
+  - libgd=2.3.3
+  - libglib=2.78.4
+  - libiconv=1.17
+  - libjpeg-turbo=3.0.0
+  - libpng=1.6.42
+  - librsvg=2.56.3
+  - libsodium=1.0.18
+  - libsqlite=3.45.1
+  - libtiff=4.6.0
+  - libwebp=1.3.2
+  - libwebp-base=1.3.2
+  - libxml2=2.12.5
+  - libzlib=1.2.13
+  - ncurses=6.4
+  - nest-asyncio2=1.7.2
+  - openssl=3.6.4
+  - pango=1.50.14
+  - pcre2=10.42
+  - pexpect=4.9.0
+  - pickleshare=0.7.5
+  - pip=24.0
+  - pixman=0.43.2
+  - ptyprocess=0.7.0
+  - pure_eval=0.2.3
+  - python=3.10.13
+  - python-graphviz=0.20.1
+  - python_abi=3.10
+  - readline=8.2
+  - setuptools=69.1.0
+  - stack_data=0.6.3
+  - tk=8.6.13
+  - typing_extensions=4.16.0
+  - wheel=0.42.0
+  - xz=5.2.6
+  - zeromq=4.3.5
+  - zlib=1.2.13
+  - zstd=1.5.5
   - pip:
       - aesara==2.9.3
       - alembic==1.13.2
@@ -162,7 +174,6 @@ dependencies:
       - pandas==2.0.1
       - pandocfilters==1.5.1
       - parso==0.8.3
-      - pexpect==4.9.0
       - pillow==10.2.0
       - platformdirs==4.2.0
       - plotly==5.21.0
@@ -171,7 +182,6 @@ dependencies:
       - prometheus-client==0.20.0
       - prompt-toolkit==3.0.43
       - psutil==5.9.8
-      - ptyprocess==0.7.0
       - pure-eval==0.2.2
       - pycparser==2.21
       - pyerfa==2.0.1.4
@@ -209,7 +219,6 @@ dependencies:
       - sniffio==1.3.0
       - soupsieve==2.5
       - sqlalchemy==2.0.35
-      - stack-data==0.6.3
       - sympy==1.12
       - tenacity==8.2.3
       - terminado==0.18.0
