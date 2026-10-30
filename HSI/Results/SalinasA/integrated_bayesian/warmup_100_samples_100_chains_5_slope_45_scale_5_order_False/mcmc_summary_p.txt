@@ -1,0 +1,5 @@
+
+                mean       std    median      5.0%     95.0%     n_eff     r_hat
+      mu_1      2.72      0.27      2.87      2.29      2.94      3.48      4.26
+
+Number of divergences: 4

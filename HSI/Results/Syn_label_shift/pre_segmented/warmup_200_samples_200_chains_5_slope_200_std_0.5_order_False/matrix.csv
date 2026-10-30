@@ -1,0 +1,6 @@
+Name of method,accuracy
+Overall accuracy model,64.4
+Overall accuracy model_posterior_mean,98.0
+Overall accuracy model_posterior_mean_plus_std,98.0
+Overall accuracy model_posterior_mean_minus_std,97.2
+Overall accuracy model_posterior_MAP,98.0

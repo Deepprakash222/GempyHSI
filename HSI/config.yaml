@@ -1,0 +1,23 @@
+# Default run configuration, matching the original argparse defaults.
+# Load with: RunConfig.from_yaml("config.yaml")
+# Only include the keys you want to override -- anything omitted falls
+# back to the RunConfig dataclass default.
+
+seed: 42                            # random seed for reproducibility
+clusters: 3                         # total number of clusters (KSL=3, SalinasA = 6)
+directory_path: "./Results"         # directory in which results are stored
+slope_gempy: 200                    # sigmoid slope for GemPy (KSL=200, SalinasA = 45)
+scale: 20                          # scaling factor to generate probability for each voxel
+likelihood_std: 1.0                 # std used for the likelihood
+enforce_ordering: False             # whether to enforce ordering of the layers in the prior
+rerun_bayesian: False               # whether to run the bayesian pipeline or not
+prior_number_samples: 1000          # number of samples for the prior
+posterior_number_samples: 200       # number of samples for the posterior
+posterior_warmup_steps: 200         # number of warmup steps for the posterior
+posterior_num_chain: 5              # number of MCMC chains
+step_size:  0.0085                  # step_size of NUTS
+adapt_step_size: True               # adapt_step_size of NUTS
+target_accept_prob: 0.75            # target_accept_prob of NUTS
+max_tree_depth: 10                  # max_tree_depth of NUTS
+mp_context: "spawn"                 # multiprocessing context for the posterior sampling (spawn, fork, forkserver)
+bandwidth: 0.003                    # bandwidth of the plot for prior and posterior (KSL=0.003, SalinasA = 0.08)

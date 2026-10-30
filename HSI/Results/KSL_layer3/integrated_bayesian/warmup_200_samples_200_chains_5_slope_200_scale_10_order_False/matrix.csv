@@ -1,0 +1,22 @@
+Name of method,accuracy
+silhouette_model,0.22
+davies_bouldin_model,1.69
+calinski_harabasz_model,68.22
+silhouette_GMM,0.72
+davies_bouldin_GMM,0.56
+calinski_harabasz_GMM,503.21
+silhouette_Kmeans_label,0.72
+davies_bouldin_Kmeans_label,0.56
+calinski_harabasz_Kmeans_label,503.21
+silhouette_posterior_mean,0.48
+davies_bouldin_posterior_mean,1.37
+calinski_harabasz_posterior_mean,120.83
+silhouette_posterior_mean_plus_std,0.46
+davies_bouldin_posterior_mean_plus_std,1.49
+calinski_harabasz_posterior_mean_plus_std,109.06
+silhouette_posterior_mean_minus_std,0.5
+davies_bouldin_posterior_mean_minus_std,1.28
+calinski_harabasz_posterior_mean_minus_std,130.6
+silhouette_posterior_MAP,0.48
+davies_bouldin_posterior_MAP,1.37
+calinski_harabasz_posterior_MAP,120.83
